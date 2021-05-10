@@ -1,0 +1,6 @@
+/bazel-*
+*.pyc
+.cproject
+.project
+.pydevproject
+.settings
