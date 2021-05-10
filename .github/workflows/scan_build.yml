@@ -5,8 +5,7 @@ on:
     types: [labeled]
 
 env:
-  PACKAGE_NAME: delphyne_gui
-  EXTRA_PACKAGE_NAME: delphyne_demos
+  PACKAGE_NAME: delphyne_demos
   ROS_DISTRO: dashing
   ROS_WS: maliput_ws
 
@@ -79,6 +78,12 @@ jobs:
         token: ${{ secrets.MALIPUT_TOKEN }}
     - uses: actions/checkout@v2
       with:
+        repository: ToyotaResearchInstitute/delphyne_gui
+        fetch-depth: 0
+        path: ${{ env.ROS_WS }}/src/delphyne_gui
+        token: ${{ secrets.MALIPUT_TOKEN }}
+    - uses: actions/checkout@v2
+      with:
         repository: ToyotaResearchInstitute/drake-vendor
         fetch-depth: 0
         path: ${{ env.ROS_WS }}/src/drake_vendor
@@ -106,7 +111,7 @@ jobs:
     # install delphyne_gui prereqs using maliput_infrastructure/tools/prereqs.lib
     - name: install delphyne_gui prereqs
       shell: bash
-      working-directory: ${{ env.ROS_WS }}/src/${{ env.PACKAGE_NAME }}
+      working-directory: ${{ env.ROS_WS }}/src/delphyne_gui
       run: ${GITHUB_WORKSPACE}/maliput_infrastructure/tools/prereqs-install -t ignition .
     - name: clang 8 install
       shell: bash
@@ -134,5 +139,5 @@ jobs:
         . /opt/ros/${ROS_DISTRO}/setup.bash;
         ./src/${PACKAGE_NAME}/.github/run_scan_build \
             --cmake-args -DCMAKE_LINKER=${LINKER_PATH} \
-            --packages-up-to ${PACKAGE_NAME} ${EXTRA_PACKAGE_NAME} \
+            --packages-up-to ${PACKAGE_NAME} \
             --event-handlers=console_direct+;
