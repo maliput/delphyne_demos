@@ -1,6 +1,6 @@
-# delphyne_gui
+# delphyne_demos
 
-This is the repository for Delphyne GUI, a front-end visualizer for `delphyne`.
+This is the repository for Delphyne demos, a front-end visualizer for `delphyne`.
 
 ## Build
 
@@ -18,13 +18,13 @@ source ./bringup
   - If not building drake from source:
 
    ```sh
-   colcon build --packages-up-to delphyne_gui
+   colcon build --packages-up-to delphyne_demos
    ```
 
   - If building drake from source:
 
    ```sh
-   colcon build --cmake-args -DWITH_PYTHON_VERSION=3 --packages-up-to delphyne_gui
+   colcon build --cmake-args -DWITH_PYTHON_VERSION=3 --packages-up-to delphyne_demos
    ```
 
 ## Tools
@@ -32,7 +32,7 @@ source ./bringup
 An automated script that looks for all C++ source files and calls `clang-format` accordingly:
 
 ```sh
-./tools/reformat_code.sh
+./delphyne_demos/tools/reformat_code.sh
 ```
 
 This script must be run from the top-level of the repository in order to find all of the files.
