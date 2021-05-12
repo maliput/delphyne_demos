@@ -43,6 +43,8 @@ jobs:
         apt install -y software-properties-common;
         add-apt-repository -y -u ppa:git-core/ppa;
         apt install -y git;
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
     - uses: actions/checkout@v2
       with:
         path: ${{ env.ROS_WS }}/src/${{ env.PACKAGE_NAME }}
