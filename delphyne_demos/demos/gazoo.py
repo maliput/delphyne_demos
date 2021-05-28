@@ -135,7 +135,7 @@ def main():
 
     if not os.path.isfile(filename):
         print("Required file {} not found."
-              " Please, make sure to install the latest delphyne-gui."
+              " Please, make sure to install the latest delphyne_gui."
               .format(os.path.abspath(filename)))
         quit()
 
