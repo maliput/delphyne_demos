@@ -160,7 +160,7 @@ def main():
 
     tree_time_step = 0.02
     with launch_interactive_simulation(
-            simulation_tree.runner, bare=args.bare, ign_visualizer="visualizer0"
+            simulation_tree.runner, bare=args.bare, ign_visualizer="visualizer"
     ) as launcher:
         if args.duration < 0:
             # run indefinitely
