@@ -76,7 +76,7 @@ def create_city_scenario_subtree(num_rail_cars, num_mobil_cars):
 
     if not os.path.isfile(file_path):
         print("Required file {} not found."
-              " Please, make sure to install the latest delphyne-gui."
+              " Please, make sure to install the latest delphyne_gui."
               .format(os.path.abspath(file_path)))
         sys.exit()
 
