@@ -124,7 +124,7 @@ jobs:
       run: |
         rosdep update --include-eol-distros;
         rosdep install  -i -y --rosdistro ${ROS_DISTRO} \
-          --skip-keys "ignition-transport8 ignition-msgs5 ignition-math6 ignition-common3 ignition-gui0 ignition-gui3 ignition-rendering3 pybind11" \
+          --skip-keys "ignition-transport8 ignition-msgs5 ignition-math6 ignition-common3 ignition-gui3 ignition-rendering3 pybind11" \
           --from-paths src
     - name: install drake
       shell: bash
@@ -157,5 +157,6 @@ jobs:
       working-directory: ${{ env.ROS_WS }}
       run: |
         . /opt/ros/${ROS_DISTRO}/setup.bash;
+        . install/setup.bash;
         colcon test --packages-select ${PACKAGE_NAME} --event-handlers=console_direct+;
         colcon test-result --verbose;
