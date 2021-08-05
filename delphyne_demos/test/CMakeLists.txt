@@ -61,7 +61,6 @@ if (NOT ${SANITIZERS})
     NAME smoke_test_delphyne_mali2_figure_8
     COMMAND delphyne_mali2 -n Figure8 -b -d 2
   )
-  # TODO(maliput_malidrive#6): Restore once we have the right tolerance value.
   add_test(
     NAME smoke_test_delphyne_mali2_r_r_figure_8
     COMMAND delphyne_mali2 -n RRFigure8 -b -d 2
@@ -93,6 +92,10 @@ if (NOT ${SANITIZERS})
   add_test(
     NAME smoke_test_delphyne_mali2_town_07
     COMMAND delphyne_mali2 -n Town07 -b -d 2
+  )
+  add_test(
+    NAME smoke_test_delphyne_mali2_town_11
+    COMMAND delphyne_mali2 -n Town11 -b -d 2
   )
   add_test(
     NAME smoke_test_delphyne_mali2_variable_offset
