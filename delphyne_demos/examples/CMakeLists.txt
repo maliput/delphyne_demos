@@ -12,7 +12,6 @@ install(
     delphyne_dragway
     delphyne_gazoo
     delphyne_keyop
-    delphyne_mali
     delphyne_mali2
     delphyne_mobil_perf
     delphyne_realtime

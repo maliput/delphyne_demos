@@ -116,7 +116,7 @@ def main():
         scenario_subtree = delphyne.behaviours.roads.Multilane(
             file_path=args.filename)
     elif args.road_type == "malidrive":
-        scenario_subtree = delphyne.behaviours.roads.Malidrive(
+        scenario_subtree = delphyne.behaviours.roads.Malidrive2(
             file_path=args.filename,
             name=args.name)
     else:
