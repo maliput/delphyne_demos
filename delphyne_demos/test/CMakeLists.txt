@@ -2,10 +2,6 @@
 # When sanitizers are activated python scripts are disabled.
 if (NOT ${SANITIZERS})
   add_test(
-    NAME smoke_test_delphyne_mali
-    COMMAND ${PROJECT_SOURCE_DIR}/examples/delphyne_mali -b -d 2
-  )
-  add_test(
     NAME smoke_test_delphyne_mali2_line_single_lane
     COMMAND delphyne_mali2 -n LineSingleLane -b -d 2
   )
