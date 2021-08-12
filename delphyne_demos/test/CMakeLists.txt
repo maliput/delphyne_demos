@@ -94,10 +94,6 @@ if (NOT ${SANITIZERS})
     COMMAND delphyne_mali2 -n Town07 -b -d 2
   )
   add_test(
-    NAME smoke_test_delphyne_mali2_town_11
-    COMMAND delphyne_mali2 -n Town11 -b -d 2
-  )
-  add_test(
     NAME smoke_test_delphyne_mali2_variable_offset
     COMMAND delphyne_mali2 -n LineVariableOffset -b -d 2
   )
