@@ -3,7 +3,7 @@
 # Copyright 2020 Toyota Research Institute
 #
 """
-The malidrive 2 demo.
+The maliput_malidrive demo.
 ```
 """
 ##############################################################################
@@ -237,7 +237,7 @@ def create_mali_scenario_subtree(file_path, features,
                                  lane_position, direction_of_travel,
                                  lane_id, linear_tolerance,
                                  angular_tolerance=1e-3):
-    scenario_subtree = delphyne.behaviours.roads.Malidrive2(
+    scenario_subtree = delphyne.behaviours.roads.Malidrive(
         file_path=file_path,
         features=features,
         name=os.path.splitext(os.path.basename(file_path))[0],
