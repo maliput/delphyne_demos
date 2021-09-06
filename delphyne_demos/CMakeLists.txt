@@ -36,6 +36,22 @@ if(BUILD_TESTING)
   ament_flake8("--config" ${CMAKE_CURRENT_SOURCE_DIR}/.flake8)
 endif()
 
+##############################################################################
+# Docs
+##############################################################################
+
+if(NOT DEFINED BUILD_DOCS)
+  set(BUILD_DOCS 1)
+endif()
+
+if(BUILD_DOCS)
+  find_package(ament_cmake_doxygen REQUIRED)
+  ament_doxygen_generate(doxygen_maliput_malidrive
+    CONFIG_OVERLAY doc/Doxyfile.overlay.in
+    DEPENDENCIES delphyne delphyne_gui
+  )
+endif()
+
 add_subdirectory(demos)
 add_subdirectory(examples)
 add_subdirectory(test)
