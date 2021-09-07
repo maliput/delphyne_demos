@@ -7,6 +7,8 @@
   <maintainer email="daniel.stonier@tri.global">Daniel Stonier</maintainer>
   <license file="../LICENSE">BSD 3-Clause</license>
 
+  <build_depend>ament_cmake_doxygen</build_depend>
+
   <exec_depend>delphyne</exec_depend>
   <exec_depend>delphyne_gui</exec_depend>
   <exec_depend>ament_cmake</exec_depend>
