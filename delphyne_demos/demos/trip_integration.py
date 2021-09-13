@@ -162,6 +162,7 @@ def main():
     simulation_tree.setup(
         realtime_rate=args.realtime_rate,
         start_paused=args.paused,
+        log=args.log,
         logfile_name=args.logfile_name,
         time_step=time_step
     )
