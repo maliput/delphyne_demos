@@ -310,6 +310,7 @@ def main():
         realtime_rate=args.realtime_rate,
         start_paused=args.paused,
         logfile_name=args.logfile_name,
+        log=args.log,
         time_step=sim_runner_time_step
     )
 
