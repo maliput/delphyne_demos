@@ -64,9 +64,9 @@ def lane_position_to_inertial_pose2d(road_geometry, lane_id, lane_position):
     lane = road_index.GetLane(lane_id)
     inertial_position = lane.ToInertialPosition(lane_position)
     inertial_orientation = lane.GetOrientation(lane_position)
-    initial_x, initial_y, _ = inertial_position.xyz()
+    xyz = inertial_position.xyz()
     initial_heading = inertial_orientation.rpy().yaw_angle()
-    return initial_x, initial_y, initial_heading
+    return xyz.x(), xyz.y(), initial_heading
 
 
 def create_city_scenario_subtree(num_rail_cars, num_mobil_cars):
