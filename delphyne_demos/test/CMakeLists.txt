@@ -95,6 +95,42 @@ if (NOT ${SANITIZERS})
   )
   add_test(
     NAME smoke_test_delphyne_gazoo
-    COMMAND ${PROJECT_SOURCE_DIR}/examples/delphyne_gazoo -b -d 2
+    COMMAND delphyne_gazoo -b -d 2
+  )
+  add_test(
+    NAME smoke_test_delphyne_city
+    COMMAND delphyne_city -b -d 2
+  )
+  add_test(
+    NAME smoke_test_delphyne_crash
+    COMMAND delphyne_crash -b -d 2
+  )
+  add_test(
+    NAME smoke_test_delphyne_dragway
+    COMMAND delphyne_dragway -b -d 2
+  )
+  add_test(
+    NAME smoke_test_delphyne_keyop
+    COMMAND delphyne_keyop -b -d 2
+  )
+  add_test(
+    NAME smoke_test_delphyne_mobil_perf
+    COMMAND delphyne_mobil_perf curved_lanes -b -d 2
+  )
+  add_test(
+    NAME smoke_test_delphyne_realtime
+    COMMAND delphyne_realtime -b -d 2
+  )
+  add_test(
+    NAME smoke_test_delphyne_roads
+    COMMAND delphyne_roads -b -d 2
+  )
+  add_test(
+    NAME smoke_test_delphyne_scriptlets
+    COMMAND delphyne_scriptlets -b -d 2
+  )
+  add_test(
+    NAME smoke_test_delphyne_trip_integration
+    COMMAND delphyne_trip_integration -b -d 2
   )
 endif()
