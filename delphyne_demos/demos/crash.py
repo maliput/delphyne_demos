@@ -56,14 +56,12 @@ def check_for_agent_collisions(simulation_subtree):
         print("--> {} was going at {} m/s and hit {}.".format(
             agent1.name(), np.linalg.norm(agent1_velocity[3:]), agent2.name()
         ))
-        agent1_pose = agent1.get_pose()
-        print("    It now rests at {}.".format(agent1_pose.translation()))
+        print("    It now rests at {}.".format(agent1.get_pose_translation()))
         agent2_velocity = agent2.get_velocity()
         print("--> {} was going at {} m/s and hit {}.".format(
             agent2.name(), np.linalg.norm(agent2_velocity[3:]), agent1.name()
         ))
-        agent2_pose = agent2.get_pose()
-        print("    It now rests at {}.".format(agent2_pose.translation()))
+        print("    It now rests at {}.".format(agent2.get_pose_translation()))
     simulation_subtree.runner.pause_simulation()
     print("\nSimulation paused.")
 
