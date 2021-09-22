@@ -180,7 +180,7 @@ def main():
           "************************************************************\n")
 
     with launch_interactive_simulation(
-            simulation_tree.runner, bare=args.bare
+            simulation_tree.runner, layout=args.layout, bare=args.bare
     ) as launcher:
         if args.duration < 0:
             # run indefinitely

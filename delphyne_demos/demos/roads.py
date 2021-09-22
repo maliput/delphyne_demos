@@ -35,7 +35,14 @@ being the following road network types are supported:
 dragway, onramp, and multilane.
 
 This demo uses the subcommand style, where each road
-type can handle different parameters. To get help on each
+type can handle different parameters.
+
+The optional arguments that are common to all the roads
+should be located before the road type.
+
+$ {0} --help
+
+To get help on each
 road type's parameters, run for example:
 
 $ {0} multilane --help
@@ -141,7 +148,7 @@ def main():
 
     tree_time_step = 0.02
     with launch_interactive_simulation(
-        simulation_tree.runner, bare=args.bare, ign_visualizer="visualizer"
+        simulation_tree.runner, layout=args.layout, bare=args.bare, ign_visualizer="visualizer"
     ) as launcher:
         if args.duration < 0:
             # run indefinitely
