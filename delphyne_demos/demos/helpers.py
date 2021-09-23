@@ -66,5 +66,9 @@ def create_argument_parser(title, content, default_duration=-1.0):
                                              'visualizer (default: False)'))
     parser.add_argument('-y', '--layout', default="layout_with_teleop.config",
                         action='store', type=str,
-                        help='Custom layout config file (default: layout_with_teleop.config)')
+                        help='Custom layout config file path.'
+                             'If the path is relative it will look for it '
+                             'first at env `DELPHYNE_GUI_RESOURCE_ROOT/layouts` '
+                             'location and then at the execution location. '
+                             '(default: layout_with_teleop.config)')
     return parser
