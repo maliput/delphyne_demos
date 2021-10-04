@@ -10,6 +10,7 @@ install(
     dragway.py
     helpers.py
     gazoo.py
+    keyboard_handler.py
     keyop.py
     mali.py
     mobil_perf.py
