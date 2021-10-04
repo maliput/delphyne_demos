@@ -10,12 +10,6 @@ A simple keyop demo for integrating with the portable agent framework (TRIP).
 # Imports
 ##############################################################################
 
-from select import select
-
-import atexit
-import sys
-import termios
-
 import delphyne.trees
 import delphyne.behaviours
 import py_trees.behaviour
@@ -24,55 +18,12 @@ import py_trees.common
 from delphyne_gui.utilities import launch_interactive_simulation
 
 from . import helpers
+from . import keyboard_handler
 
 
 ##############################################################################
 # Supporting Classes & Methods
 ##############################################################################
-
-class KeyboardHandler(object):
-    """A keyboard-interrupt poller. Allows users to read a keyboard
-    input with a non-locking behavior making use of the select function,
-    available on most *nix systems.
-
-    This class is based on the work done by Frank Deng, available on GitHub
-    as part of a set of python tools released under the MIT licence:
-    https://github.com/frank-deng/experimental-works/blob/master/kbhit.py .
-    """
-
-    def __init__(self, input_stream=None):
-        if input_stream:
-            self.input_stream = input_stream
-        else:
-            self.input_stream = sys.stdin
-        # Save current terminal settings
-        self.file_descriptor = self.input_stream.fileno()
-        self.new_terminal = termios.tcgetattr(self.file_descriptor)
-        self.old_terminal = termios.tcgetattr(self.file_descriptor)
-        # New terminal setting unbuffered
-        self.new_terminal[3] = (self.new_terminal[3] &
-                                ~termios.ICANON & ~termios.ECHO)
-        termios.tcsetattr(self.file_descriptor,
-                          termios.TCSAFLUSH, self.new_terminal)
-        # Support normal-terminal reset at exit
-        atexit.register(self.set_normal_term)
-
-    def set_normal_term(self):
-        """Resets to default terminal settings."""
-        termios.tcsetattr(self.file_descriptor,
-                          termios.TCSAFLUSH, self.old_terminal)
-
-    def get_character(self):
-        """Reads a character from the keyboard."""
-        char = self.input_stream.read(1)
-        if char == '\x00' or ord(char) >= 0xA1:
-            return char + self.input_stream.read(1)
-        return char
-
-    def key_hit(self):
-        """Returns True if a keyboard key has been pressed, False otherwise."""
-        key_hit, _, _ = select([self.input_stream], [], [], 0)
-        return key_hit != []
 
 
 def parse_arguments():
@@ -154,7 +105,7 @@ def main():
 
     time_step = 0.01  # The timestep of the simulation and tree.
 
-    keyboard = KeyboardHandler()
+    keyboard = keyboard_handler.get_keyboard_handler()
 
     simulation_tree = delphyne.trees.BehaviourTree(
         root=create_scenario_subtree(keyboard))
