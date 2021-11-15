@@ -20,6 +20,8 @@ import delphyne.blackboard
 
 import delphyne_gui.utilities
 
+import maliput.api
+
 from delphyne_gui.utilities import launch_interactive_simulation
 
 from . import helpers
@@ -61,7 +63,7 @@ def lane_position_to_inertial_pose2d(road_geometry, lane_id, lane_position):
     lane_position = resolve(lane_position, road_geometry, lane_id)
 
     road_index = road_geometry.ById()
-    lane = road_index.GetLane(lane_id)
+    lane = road_index.GetLane(maliput.api.LaneId(lane_id))
     inertial_position = lane.ToInertialPosition(lane_position)
     inertial_orientation = lane.GetOrientation(lane_position)
     xyz = inertial_position.xyz()
