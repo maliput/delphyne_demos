@@ -1,3 +1,7 @@
+| GCC | Sanitizers(Clang) | Scan-Build |
+| --------- | --------- | -------- |
+|[![gcc](https://github.com/ToyotaResearchInstitute/delphyne_demos/actions/workflows/build.yml/badge.svg)](https://github.com/ToyotaResearchInstitute/delphyne_demos/actions/workflows/build.yml) | [![clang](https://github.com/ToyotaResearchInstitute/delphyne_demos/actions/workflows/sanitizers.yml/badge.svg)](https://github.com/ToyotaResearchInstitute/delphyne_demos/actions/workflows/sanitizers.yml) | [![scan_build](https://github.com/ToyotaResearchInstitute/delphyne_demos/actions/workflows/scan_build.yml/badge.svg)](https://github.com/ToyotaResearchInstitute/delphyne_demos/actions/workflows/scan_build.yml) |
+
 # delphyne_demos
 
 This is the repository for Delphyne demos, a front-end visualizer for `delphyne`.
