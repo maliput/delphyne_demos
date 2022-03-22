@@ -270,7 +270,7 @@ def create_mali_scenario_subtree(file_path, yaml_file_path, features,
         features=features,
     )
 
-    if agent_type is 'RuleRailCar':
+    if agent_type == 'RuleRailCar':
         scenario_subtree.add_child(
             delphyne.behaviours.agents.RuleRailCar(
                 name='rule-rail-car',
