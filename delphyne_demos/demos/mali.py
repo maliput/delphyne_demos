@@ -268,6 +268,8 @@ def create_mali_scenario_subtree(file_path, yaml_file_path, features,
         intersection_book_path=yaml_file_path,
         name=os.path.splitext(os.path.basename(file_path))[0],
         features=features,
+        linear_tolerance=linear_tolerance,
+        angular_tolerance=angular_tolerance,
     )
 
     if agent_type == 'RuleRailCar':
