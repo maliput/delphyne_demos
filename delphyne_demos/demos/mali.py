@@ -198,6 +198,16 @@ KNOWN_ROADS = {
         'moving_forward': True,
         'linear_tolerance': 5e-2,
     },
+    'SingleRoadPedestrianCrosswalk': {
+        'description': 'Single line with a virtual pedestrian crosswalk',
+        'file_path': 'odr/SingleRoadPedestrianCrosswalk.xodr',
+        'yaml_file_path': 'odr/SingleRoadPedestrianCrosswalk.yaml',
+        'agent_type': 'RuleRailCar',
+        'lane_id': '1_0_-1',
+        'lane_position': 0.,
+        'moving_forward': True,
+        'linear_tolerance': 1e-3,
+    },
 }
 
 
@@ -218,7 +228,19 @@ found in the current working directory.
 """.format(', '.join(KNOWN_ROADS))
 
     parser.add_argument(
-        '-n', '--road-name', default='SShapeRoad', help=argument_help
+        '-n', '--road_name', default='SShapeRoad', help=argument_help
+    )
+
+    parser.add_argument(
+        '-yn', '--yaml_name', default='', help=argument_help
+    )
+
+    parser.add_argument(
+        '-lt', '--linear_tolerance', default='1e-3', help=argument_help
+    )
+
+    parser.add_argument(
+        '-at', '--agent_type', default='RailCar', help=argument_help
     )
     return parser.parse_args()
 
@@ -233,27 +255,45 @@ def get_malidrive_resource(path):
     return ''
 
 
-def create_mali_scenario_subtree(file_path, features,
-                                 lane_position, direction_of_travel,
+def create_mali_scenario_subtree(file_path, yaml_file_path, features,
+                                 lane_position, agent_type, direction_of_travel,
                                  lane_id, linear_tolerance,
                                  angular_tolerance=1e-3):
     scenario_subtree = delphyne.behaviours.roads.Malidrive(
         file_path=file_path,
-        features=features,
+        rule_registry_file_path=yaml_file_path,
+        road_rulebook_file_path=yaml_file_path,
+        traffic_light_book_path=yaml_file_path,
+        phase_ring_path=yaml_file_path,
+        intersection_book_path=yaml_file_path,
         name=os.path.splitext(os.path.basename(file_path))[0],
+        features=features,
         linear_tolerance=linear_tolerance,
-        angular_tolerance=angular_tolerance
+        angular_tolerance=angular_tolerance,
     )
-    scenario_subtree.add_child(
-        delphyne.behaviours.agents.RailCar(
-            name='car',
-            lane_id=lane_id,
-            longitudinal_position=lane_position,
-            lateral_offset=0.0,
-            speed=15.0,
-            direction_of_travel=direction_of_travel
+
+    if agent_type == 'RuleRailCar':
+        scenario_subtree.add_child(
+            delphyne.behaviours.agents.RuleRailCar(
+                name='rule-rail-car',
+                lane_id=lane_id,
+                longitudinal_position=lane_position,
+                lateral_offset=0.,
+                speed=15.0,
+                direction_of_travel=direction_of_travel
+            )
         )
-    )
+    else:
+        scenario_subtree.add_child(
+            delphyne.behaviours.agents.RailCar(
+                name='rail-car',
+                lane_id=lane_id,
+                longitudinal_position=lane_position,
+                lateral_offset=0.,
+                speed=15.0,
+                direction_of_travel=direction_of_travel
+            )
+        )
     return scenario_subtree
 
 ##############################################################################
@@ -269,6 +309,9 @@ def main():
         road = {
             'description': 'Custom user-provided road',
             'file_path': args.road_name,
+            'yaml_file_path': args.yaml_name,
+            'linear_tolerance': args.linear_tolerance,
+            'agent_type': args.agent_type,
             'lane_position': 0.,
             'moving_forward': True,
         }
@@ -278,8 +321,16 @@ def main():
             road['file_path'] = os.path.join(
                 'odr', args.road_name + '.xodr'
             )
+        if 'yaml_file_path' not in road:
+            road['yaml_file_path'] = os.path.join(
+                'odr', args.yaml_name + '.yaml'
+            )
         if not os.path.isabs(road['file_path']):
             road['file_path'] = get_malidrive_resource(road['file_path'])
+        if not os.path.isabs(road['yaml_file_path']):
+            road['yaml_file_path'] = get_malidrive_resource(road['yaml_file_path'])
+        if 'agent_type' not in road:
+            road['agent_type'] = "RailCar"
     else:
         print("Unknown road {}.".format(args.road_name))
         quit()
@@ -300,9 +351,10 @@ def main():
 
     angular_tolerance = 1e-3 if 'angular_tolerance' not in road else road['angular_tolerance']
     simulation_tree = delphyne.trees.BehaviourTree(
-        root=create_mali_scenario_subtree(road['file_path'], features,
-                                          road['lane_position'], road['moving_forward'],
-                                          lane_id, road['linear_tolerance'],
+        root=create_mali_scenario_subtree(road['file_path'], road['yaml_file_path'], features,
+                                          road['lane_position'], road['agent_type'],
+                                          road['moving_forward'], lane_id,
+                                          road['linear_tolerance'],
                                           angular_tolerance=angular_tolerance))
 
     sim_runner_time_step = 0.015
