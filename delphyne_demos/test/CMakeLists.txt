@@ -98,6 +98,10 @@ if (NOT ${SANITIZERS})
     COMMAND delphyne_mali -n SingleRoadPedestrianCrosswalk -b -d 2
   )
   add_test(
+    NAME smoke_test_delphyne_mali_loop_road_pedestrian_crosswalk
+    COMMAND delphyne_mali -n LoopRoadPedestrianCrosswalk -b -d 2
+  )
+  add_test(
     NAME smoke_test_delphyne_gazoo
     COMMAND delphyne_gazoo -b -d 2
   )

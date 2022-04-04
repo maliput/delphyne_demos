@@ -208,6 +208,16 @@ KNOWN_ROADS = {
         'moving_forward': True,
         'linear_tolerance': 1e-3,
     },
+    'LoopRoadPedestrianCrosswalk': {
+        'description': 'Loop with two virtual pedestrian crosswalks',
+        'file_path': 'odr/LoopRoadPedestrianCrosswalk.xodr',
+        'yaml_file_path': 'odr/LoopRoadPedestrianCrosswalk.yaml',
+        'agent_type': 'RuleRailCar',
+        'lane_id': '1_0_-1',
+        'lane_position': 0.,
+        'moving_forward': True,
+        'linear_tolerance': 1e-3,
+    },
 }
 
 
