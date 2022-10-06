@@ -55,7 +55,7 @@ from . import helpers
 
 KNOWN_ROADS = {
     'StraightForward': {
-        'description': 'Single line lane of 100m length',
+        'description': 'Single line lane of 1000m length',
         'file_path': 'straight_forward.osm',
         'origin': '{0., 0.}',
         'lane_id': '1010',
@@ -104,7 +104,7 @@ def get_maliput_osm_resource(path):
     """Resolve the path against maliput_osm resources root location."""
     root = utilities.get_from_env_or_fail('MALIPUT_OSM_RESOURCE_ROOT')
     for root in root.split(':'):
-        resolved_path = os.path.join(root, 'resources', 'osm' , path)
+        resolved_path = os.path.join(root, 'resources', 'osm', path)
         if os.path.exists(resolved_path):
             return resolved_path
     return ''
@@ -152,15 +152,9 @@ def create_mali_scenario_subtree(file_path, origin, yaml_file_path, features,
         )
     return scenario_subtree
 
-##############################################################################
-# Main
-##############################################################################
 
-
-def main():
-    """Keeping pylint entertained."""
-    args = parse_arguments()
-
+def get_road_configuration(args):
+    """Return the configuration given the arguments of the application."""
     if os.path.isfile(args.road_name):
         road = {
             'description': 'Custom user-provided road',
@@ -193,6 +187,18 @@ def main():
     else:
         print("Unknown road {}.".format(args.road_name))
         quit()
+    return road
+
+##############################################################################
+# Main
+##############################################################################
+
+
+def main():
+    """Keeping pylint entertained."""
+    args = parse_arguments()
+
+    road = get_road_configuration(args)
 
     if 'lane_id' in road:
         lane_id = road['lane_id']
@@ -210,12 +216,12 @@ def main():
 
     angular_tolerance = 1e-3 if 'angular_tolerance' not in road else road['angular_tolerance']
     simulation_tree = delphyne.trees.BehaviourTree(
-        root=create_mali_scenario_subtree(road['file_path'], road['origin'], road['yaml_file_path'], features,
+        root=create_mali_scenario_subtree(road['file_path'], road['origin'],
+                                          road['yaml_file_path'], features,
                                           road['lane_position'], road['agent_type'],
                                           road['moving_forward'], lane_id,
                                           road['linear_tolerance'],
                                           angular_tolerance=angular_tolerance))
-
     sim_runner_time_step = 0.015
     simulation_tree.setup(
         realtime_rate=args.realtime_rate,
