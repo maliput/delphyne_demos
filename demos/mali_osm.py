@@ -63,6 +63,24 @@ KNOWN_ROADS = {
         'moving_forward': True,
         'linear_tolerance': 1e-3,
     },
+    'ArcLane': {
+        'description': 'Arc-shaped road of 100m length',
+        'file_path': 'arc_lane.osm',
+        'origin': '{0., 0.}',
+        'lane_id': '1068',
+        'lane_position': 0.,
+        'moving_forward': True,
+        'linear_tolerance': 1e-3,
+    },
+    'ArcLaneDense': {
+        'description': 'Arc-shaped road of 100m length with a high sampling resolution.',
+        'file_path': 'arc_lane_dense.osm',
+        'origin': '{0., 0.}',
+        'lane_id': '3985',
+        'lane_position': 0.,
+        'moving_forward': True,
+        'linear_tolerance': 1e-3,
+    },
 }
 
 
