@@ -2,6 +2,10 @@
 # When sanitizers are activated python scripts are disabled.
 if (NOT ${SANITIZERS})
   add_test(
+    NAME smoke_test_delphyne_mali_osm_straight_forward
+    COMMAND delphyne_mali_osm -n StraightForward -b -d 2
+  )
+  add_test(
     NAME smoke_test_delphyne_mali_line_single_lane
     COMMAND delphyne_mali -n LineSingleLane -b -d 2
   )

@@ -13,6 +13,7 @@ install(
     keyboard_handler.py
     keyop.py
     mali.py
+    mali_osm.py
     mobil_perf.py
     realtime.py
     roads.py
