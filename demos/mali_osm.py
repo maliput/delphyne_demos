@@ -81,6 +81,15 @@ KNOWN_ROADS = {
         'moving_forward': True,
         'linear_tolerance': 1e-3,
     },
+    'ElevatedArcLane': {
+        'description': 'Arc-shaped road with an increasing elevation',
+        'file_path': 'elevated_arc_lane.osm',
+        'origin': '{0., 0.}',
+        'lane_id': '1191',
+        'lane_position': 0.,
+        'moving_forward': True,
+        'linear_tolerance': 1e-3,
+    },
 }
 
 
