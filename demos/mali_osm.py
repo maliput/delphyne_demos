@@ -90,6 +90,15 @@ KNOWN_ROADS = {
         'moving_forward': True,
         'linear_tolerance': 1e-3,
     },
+    'CShapeSuperelevatedRoad': {
+        'description': 'C-shaped road with an variation in superelevation',
+        'file_path': 'c_shape_superelevated_road.osm',
+        'origin': '{0., 0.}',
+        'lane_id': '1498',
+        'lane_position': 0.,
+        'moving_forward': True,
+        'linear_tolerance': 1e-3,
+    },
 }
 
 

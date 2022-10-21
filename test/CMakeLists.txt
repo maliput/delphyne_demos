@@ -18,6 +18,10 @@ if (NOT ${SANITIZERS})
     COMMAND delphyne_mali_osm -n ElevatedArcLane -b -d 2
   )
   add_test(
+    NAME smoke_test_delphyne_mali_osm_c_shape_superelevated_road
+    COMMAND delphyne_mali_osm -n CShapeSuperelevatedRoad -b -d 2
+  )
+  add_test(
     NAME smoke_test_delphyne_mali_line_single_lane
     COMMAND delphyne_mali -n LineSingleLane -b -d 2
   )
