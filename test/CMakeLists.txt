@@ -26,6 +26,10 @@ if (NOT ${SANITIZERS})
     COMMAND delphyne_mali_osm -n LShapeRoad -b -d 2
   )
   add_test(
+    NAME smoke_test_delphyne_mali_osm_t_shape_road
+    COMMAND delphyne_mali_osm -n TShapeRoad -b -d 2
+  )
+  add_test(
     NAME smoke_test_delphyne_mali_line_single_lane
     COMMAND delphyne_mali -n LineSingleLane -b -d 2
   )
