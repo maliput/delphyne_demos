@@ -99,6 +99,15 @@ KNOWN_ROADS = {
         'moving_forward': True,
         'linear_tolerance': 1e-3,
     },
+    'LShapeRoad': {
+        'description': 'L-shaped road.',
+        'file_path': 'l_shape_road.osm',
+        'origin': '{0., 0.}',
+        'lane_id': '1206',
+        'lane_position': 0.,
+        'moving_forward': True,
+        'linear_tolerance': 1e-3,
+    },
 }
 
 
