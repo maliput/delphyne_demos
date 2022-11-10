@@ -108,6 +108,15 @@ KNOWN_ROADS = {
         'moving_forward': True,
         'linear_tolerance': 1e-3,
     },
+    'TShapeRoad': {
+        'description': 'T-shaped road.',
+        'file_path': 't_shape_road.osm',
+        'origin': '{0., 0.}',
+        'lane_id': '1830',
+        'lane_position': 0.,
+        'moving_forward': True,
+        'linear_tolerance': 1e-3,
+    },
 }
 
 
