@@ -1,6 +1,7 @@
 # TODO(francocipollone): Improve this check by wrapping add_test() function.
 # When sanitizers are activated python scripts are disabled.
 if (NOT ${SANITIZERS})
+  ## delphyne_mali_osm
   add_test(
     NAME smoke_test_delphyne_mali_osm_straight_forward
     COMMAND delphyne_mali_osm -n StraightForward -b -d 2
@@ -25,6 +26,12 @@ if (NOT ${SANITIZERS})
     NAME smoke_test_delphyne_mali_osm_l_shape_road
     COMMAND delphyne_mali_osm -n LShapeRoad -b -d 2
   )
+  add_test(
+    NAME smoke_test_delphyne_mali_osm_y_shape_road
+    COMMAND delphyne_mali_osm -n YShapeRoad -b -d 2
+  )
+
+  ## delphyne_mali
   add_test(
     NAME smoke_test_delphyne_mali_line_single_lane
     COMMAND delphyne_mali -n LineSingleLane -b -d 2

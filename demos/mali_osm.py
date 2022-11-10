@@ -108,6 +108,15 @@ KNOWN_ROADS = {
         'moving_forward': True,
         'linear_tolerance': 1e-3,
     },
+    'YShapeRoad': {
+        'description': 'Y-shaped road.',
+        'file_path': 'y_shape_road.osm',
+        'origin': '{0., 0.}',
+        'lane_id': '1336',
+        'lane_position': 46.,
+        'moving_forward': False,
+        'linear_tolerance': 1e-3,
+    },
 }
 
 
