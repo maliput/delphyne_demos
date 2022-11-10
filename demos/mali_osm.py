@@ -115,6 +115,7 @@ KNOWN_ROADS = {
         'lane_id': '1336',
         'lane_position': 46.,
         'moving_forward': False,
+        'linear_tolerance': 1e-3,
     },
     'TShapeRoad': {
         'description': 'T-shaped road.',
