@@ -34,6 +34,10 @@ if (NOT ${SANITIZERS})
     NAME smoke_test_delphyne_mali_osm_t_shape_road
     COMMAND delphyne_mali_osm -n TShapeRoad -b -d 2
   )
+  add_test(
+    NAME smoke_test_delphyne_mali_osm_circuit
+    COMMAND delphyne_mali_osm -n Circuit -b -d 2
+  )
 
   ## delphyne_mali
   add_test(
