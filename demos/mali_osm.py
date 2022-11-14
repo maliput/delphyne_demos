@@ -126,6 +126,15 @@ KNOWN_ROADS = {
         'moving_forward': True,
         'linear_tolerance': 1e-3,
     },
+    'Circuit': {
+        'description': 'A circuit map.',
+        'file_path': 'circuit.osm',
+        'origin': '{0., 0.}',
+        'lane_id': '2158',
+        'lane_position': 0.,
+        'moving_forward': True,
+        'linear_tolerance': 1e-3,
+    },
 }
 
 
