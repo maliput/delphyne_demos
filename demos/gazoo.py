@@ -51,6 +51,40 @@ from . import helpers
 # Supporting Classes & Methods
 ##############################################################################
 
+def get_maliput_osm_circuit():
+    """Resolve the path for the circuit map against maliput_osm resources root location."""
+    root = delphyne.utilities.get_from_env_or_fail('MALIPUT_OSM_RESOURCE_ROOT')
+    filename = "circuit.osm"
+    for root in root.split(':'):
+        resolved_path = os.path.join(root, 'resources', 'osm', filename)
+        if os.path.exists(resolved_path):
+            return resolved_path
+    return ''
+
+
+def get_delphyne_gui_circuit():
+    """Resolve the path for the circuit map against delphyne_gui resources root location."""
+    filename = "roads/circuit.yaml"
+    resolved_path = delphyne_gui.utilities.get_delphyne_gui_resource(filename)
+    if os.path.exists(resolved_path):
+        return resolved_path
+    return ''
+
+
+def obtain_circuit_filepath(backend):
+  """Obtain the circuit filepath based on the selected backend."""
+  file_path = str()
+  if backend == "maliput_multilane":
+    file_path = get_delphyne_gui_circuit()
+  elif(backend == "maliput_osm"):
+    file_path = get_maliput_osm_circuit()
+
+  if not os.path.isfile(file_path):
+      print("Required map 'circuit' not found for the backend: {}"
+            .format(backend))
+      quit()
+  return file_path
+
 
 def parse_arguments():
     "Argument passing and demo documentation."
@@ -66,21 +100,44 @@ See also https://toyotagazooracing.com/
     parser.add_argument("-n", "--num-cars", default=3, type=int,
                         help="The number of MOBIL cars on scene (default: 3).")
 
+    parser.add_argument("-m", "--maliput-backend", default="maliput_multilane", type=str,
+                        help="The maliput backend to use, maliput_osm or maliput_multilane (default: maliput_multilane).")
+
     return parser.parse_args()
 
 
-def create_gazoo_scenario_subtree(filename, mobil_cars_num):
+
+def create_gazoo_scenario_subtree(backend, mobil_cars_num):
+    LANES_MULTILANE = ["l:s1_0", "l:s1_1", "l:s1_2"]
+    LANES_MALIPUT_OSM = ["1825", "1405", "1352"]
+    filename = obtain_circuit_filepath(backend)
+
     # The road geometry
-    scenario_subtree = delphyne.behaviours.roads.Multilane(
-        file_path=filename,
-        name="circuit",
-    )
+    features = delphyne.roads.ObjFeatures()
+    features.draw_elevation_bounds = False
+    if(backend == "maliput_multilane"):
+      scenario_subtree = delphyne.behaviours.roads.Multilane(
+          file_path=filename,
+          name="circuit",
+          features=features,
+
+      )
+    elif(backend == "maliput_osm"):
+      scenario_subtree = delphyne.behaviours.roads.MaliputOSM(
+          file_path=filename,
+          name="circuit",
+          origin="{0., 0.}",
+          features=features
+      )
+    else:
+      print("Backend {} not supported".format(backend))
+      quit()
 
     # Setup railcar 1
     railcar_speed = 4.0  # (m/s)
     railcar_s = 0.0      # (m)
     robot_id = 1
-    lane_1 = "l:s1_0"
+    lane_1 = LANES_MULTILANE[0] if backend == "maliput_multilane" else LANES_MALIPUT_OSM[0]
     scenario_subtree.add_child(
         delphyne.behaviours.agents.RailCar(
             name=str(robot_id),
@@ -95,7 +152,7 @@ def create_gazoo_scenario_subtree(filename, mobil_cars_num):
     railcar_speed = 8.0  # (m/s)
     railcar_s = 0.0      # (m)
     robot_id += 1
-    lane_2 = "l:s1_1"
+    lane_2 = LANES_MULTILANE[1] if backend == "maliput_multilane" else LANES_MALIPUT_OSM[1]
     scenario_subtree.add_child(
         delphyne.behaviours.agents.RailCar(
             name=str(robot_id),
@@ -110,7 +167,7 @@ def create_gazoo_scenario_subtree(filename, mobil_cars_num):
     railcar_speed = 7.0  # (m/s)
     railcar_s = 0.0      # (m)
     robot_id += 1
-    lane_3 = "l:s1_2"
+    lane_3 = LANES_MULTILANE[2] if backend == "maliput_multilane" else LANES_MALIPUT_OSM[2]
     scenario_subtree.add_child(
         delphyne.behaviours.agents.RailCar(
             name=str(robot_id),
@@ -156,18 +213,10 @@ def main():
         quit()
 
     mobil_cars_num = args.num_cars
-
-    filename = delphyne_gui.utilities.get_delphyne_gui_resource(
-        'roads/circuit.yaml')
-
-    if not os.path.isfile(filename):
-        print("Required file {} not found."
-              " Please, make sure to install the latest delphyne_gui."
-              .format(os.path.abspath(filename)))
-        quit()
+    maliput_backend = args.maliput_backend
 
     simulation_tree = delphyne.trees.BehaviourTree(
-        root=create_gazoo_scenario_subtree(filename, mobil_cars_num)
+        root=create_gazoo_scenario_subtree(maliput_backend, mobil_cars_num)
     )
 
     sim_runner_time_step = 0.015
