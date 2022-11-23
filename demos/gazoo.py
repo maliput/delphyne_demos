@@ -37,7 +37,10 @@ The gazoo demo.
 # Imports
 ##############################################################################
 
+
 import os.path
+from dataclasses import dataclass
+from enum import StrEnum
 
 import delphyne.behaviours
 import delphyne.trees
@@ -50,6 +53,12 @@ from . import helpers
 ##############################################################################
 # Supporting Classes & Methods
 ##############################################################################
+
+
+class MaliputBackend(StrEnum):
+    MALIPUT_MULTILANE = "maliput_multilane"
+    MALIPUT_OSM = "maliput_osm"
+
 
 def get_maliput_osm_circuit():
     """Resolve the path for the circuit map against maliput_osm resources root location."""
@@ -71,19 +80,32 @@ def get_delphyne_gui_circuit():
     return ''
 
 
-def obtain_circuit_filepath(backend):
-  """Obtain the circuit filepath based on the selected backend."""
-  file_path = str()
-  if backend == "maliput_multilane":
-    file_path = get_delphyne_gui_circuit()
-  elif(backend == "maliput_osm"):
-    file_path = get_maliput_osm_circuit()
+@dataclass
+class ScenarioSubtreeConfig:
+    """Configuration for the scenario subtree."""
+    name: str
+    circuit_filepath: str
+    lanes: list
+    origin: str = "{0., 0.}"
 
-  if not os.path.isfile(file_path):
-      print("Required map 'circuit' not found for the backend: {}"
-            .format(backend))
-      quit()
-  return file_path
+
+def get_scenario_subtree_config(backend):
+    """Obtain the circuit filepath based on the selected backend."""
+    if backend == MaliputBackend.MALIPUT_MULTILANE:
+        config = ScenarioSubtreeConfig(name="circuit_multilane",
+                                       circuit_filepath=get_delphyne_gui_circuit(),
+                                       lanes=["l:s1_0", "l:s1_1", "l:s1_2"])
+    elif(backend == MaliputBackend.MALIPUT_OSM):
+        config = ScenarioSubtreeConfig(name="circuit_osm",
+                                       circuit_filepath=get_maliput_osm_circuit(),
+                                       lanes=["1825", "1405", "1352"],
+                                       origin="{0., 0.}")
+
+    if not os.path.isfile(config.circuit_filepath):
+        print("Required map 'circuit' not found for the backend: {}"
+              .format(backend))
+        quit()
+    return config
 
 
 def parse_arguments():
@@ -101,43 +123,19 @@ See also https://toyotagazooracing.com/
                         help="The number of MOBIL cars on scene (default: 3).")
 
     parser.add_argument("-m", "--maliput-backend", default="maliput_multilane", type=str,
-                        help="The maliput backend to use, maliput_osm or maliput_multilane (default: maliput_multilane).")
+                        help="""The maliput backend to use, maliput_osm or maliput_multilane
+                        (default: maliput_multilane).""")
 
     return parser.parse_args()
 
 
-
-def create_gazoo_scenario_subtree(backend, mobil_cars_num):
-    LANES_MULTILANE = ["l:s1_0", "l:s1_1", "l:s1_2"]
-    LANES_MALIPUT_OSM = ["1825", "1405", "1352"]
-    filename = obtain_circuit_filepath(backend)
-
-    # The road geometry
-    features = delphyne.roads.ObjFeatures()
-    features.draw_elevation_bounds = False
-    if(backend == "maliput_multilane"):
-      scenario_subtree = delphyne.behaviours.roads.Multilane(
-          file_path=filename,
-          name="circuit",
-          features=features,
-
-      )
-    elif(backend == "maliput_osm"):
-      scenario_subtree = delphyne.behaviours.roads.MaliputOSM(
-          file_path=filename,
-          name="circuit",
-          origin="{0., 0.}",
-          features=features
-      )
-    else:
-      print("Backend {} not supported".format(backend))
-      quit()
-
+def add_agents_to_scenario(scenario_subtree, mobil_cars_num, lanes):
+    "Adds agents to the scenario subtree."
     # Setup railcar 1
     railcar_speed = 4.0  # (m/s)
     railcar_s = 0.0      # (m)
     robot_id = 1
-    lane_1 = LANES_MULTILANE[0] if backend == "maliput_multilane" else LANES_MALIPUT_OSM[0]
+    lane_1 = lanes[0]
     scenario_subtree.add_child(
         delphyne.behaviours.agents.RailCar(
             name=str(robot_id),
@@ -152,7 +150,7 @@ def create_gazoo_scenario_subtree(backend, mobil_cars_num):
     railcar_speed = 8.0  # (m/s)
     railcar_s = 0.0      # (m)
     robot_id += 1
-    lane_2 = LANES_MULTILANE[1] if backend == "maliput_multilane" else LANES_MALIPUT_OSM[1]
+    lane_2 = lanes[1]
     scenario_subtree.add_child(
         delphyne.behaviours.agents.RailCar(
             name=str(robot_id),
@@ -167,7 +165,7 @@ def create_gazoo_scenario_subtree(backend, mobil_cars_num):
     railcar_speed = 7.0  # (m/s)
     railcar_s = 0.0      # (m)
     robot_id += 1
-    lane_3 = LANES_MULTILANE[2] if backend == "maliput_multilane" else LANES_MALIPUT_OSM[2]
+    lane_3 = lanes[2]
     scenario_subtree.add_child(
         delphyne.behaviours.agents.RailCar(
             name=str(robot_id),
@@ -197,6 +195,34 @@ def create_gazoo_scenario_subtree(backend, mobil_cars_num):
         )
 
     return scenario_subtree
+
+
+def create_gazoo_scenario_subtree(backend, mobil_cars_num):
+    "Creates the Gazoo scenario subtree."
+
+    config = get_scenario_subtree_config(backend)
+
+    features = delphyne.roads.ObjFeatures()
+    features.draw_elevation_bounds = False
+    if(backend == MaliputBackend.MALIPUT_MULTILANE):
+        scenario_subtree = delphyne.behaviours.roads.Multilane(
+            file_path=config.circuit_filepath,
+            name=config.name,
+            features=features,
+
+        )
+    elif(backend == MaliputBackend.MALIPUT_OSM):
+        scenario_subtree = delphyne.behaviours.roads.MaliputOSM(
+            file_path=config.circuit_filepath,
+            name=config.name,
+            origin=config.origin,
+            features=features
+        )
+    else:
+        print("Backend {} not supported".format(backend))
+        quit()
+
+    return add_agents_to_scenario(scenario_subtree, mobil_cars_num, config.lanes)
 
 
 ##############################################################################
