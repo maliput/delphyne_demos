@@ -40,7 +40,7 @@ The gazoo demo.
 
 import os.path
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import Enum
 
 import delphyne.behaviours
 import delphyne.trees
@@ -55,7 +55,7 @@ from . import helpers
 ##############################################################################
 
 
-class MaliputBackend(StrEnum):
+class MaliputBackend(Enum):
     MALIPUT_MULTILANE = "maliput_multilane"
     MALIPUT_OSM = "maliput_osm"
 
@@ -91,19 +91,17 @@ class ScenarioSubtreeConfig:
 
 def get_scenario_subtree_config(backend):
     """Obtain the circuit filepath based on the selected backend."""
-    if backend == MaliputBackend.MALIPUT_MULTILANE:
+    if MaliputBackend(backend) == MaliputBackend.MALIPUT_MULTILANE:
         config = ScenarioSubtreeConfig(name="circuit_multilane",
                                        circuit_filepath=get_delphyne_gui_circuit(),
                                        lanes=["l:s1_0", "l:s1_1", "l:s1_2"])
-    elif(backend == MaliputBackend.MALIPUT_OSM):
+    elif(MaliputBackend(backend) == MaliputBackend.MALIPUT_OSM):
         config = ScenarioSubtreeConfig(name="circuit_osm",
                                        circuit_filepath=get_maliput_osm_circuit(),
                                        lanes=["1825", "1405", "1352"],
                                        origin="{0., 0.}")
-
-    if not os.path.isfile(config.circuit_filepath):
-        print("Required map 'circuit' not found for the backend: {}"
-              .format(backend))
+    else:
+        print("Backend {} not supported".format(backend))
         quit()
     return config
 
@@ -199,19 +197,22 @@ def add_agents_to_scenario(scenario_subtree, mobil_cars_num, lanes):
 
 def create_gazoo_scenario_subtree(backend, mobil_cars_num):
     "Creates the Gazoo scenario subtree."
-
+    print("Creating Gazoo scenario subtree...")
     config = get_scenario_subtree_config(backend)
-
+    if not os.path.isfile(config.circuit_filepath):
+        print("Required map 'circuit' not found for the backend: {}"
+              .format(backend))
+        quit()
     features = delphyne.roads.ObjFeatures()
     features.draw_elevation_bounds = False
-    if(backend == MaliputBackend.MALIPUT_MULTILANE):
+    if(MaliputBackend(backend) == MaliputBackend.MALIPUT_MULTILANE):
         scenario_subtree = delphyne.behaviours.roads.Multilane(
             file_path=config.circuit_filepath,
             name=config.name,
             features=features,
 
         )
-    elif(backend == MaliputBackend.MALIPUT_OSM):
+    elif(MaliputBackend(backend) == MaliputBackend.MALIPUT_OSM):
         scenario_subtree = delphyne.behaviours.roads.MaliputOSM(
             file_path=config.circuit_filepath,
             name=config.name,
