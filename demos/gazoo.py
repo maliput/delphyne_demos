@@ -37,7 +37,10 @@ The gazoo demo.
 # Imports
 ##############################################################################
 
+
 import os.path
+from dataclasses import dataclass
+from enum import Enum
 
 import delphyne.behaviours
 import delphyne.trees
@@ -50,6 +53,57 @@ from . import helpers
 ##############################################################################
 # Supporting Classes & Methods
 ##############################################################################
+
+
+class MaliputBackend(Enum):
+    MALIPUT_MULTILANE = "maliput_multilane"
+    MALIPUT_OSM = "maliput_osm"
+
+
+def get_maliput_osm_circuit():
+    """Resolve the path for the circuit map against maliput_osm resources root location."""
+    root = delphyne.utilities.get_from_env_or_fail('MALIPUT_OSM_RESOURCE_ROOT')
+    filename = "circuit.osm"
+    for root in root.split(':'):
+        resolved_path = os.path.join(root, 'resources', 'osm', filename)
+        if os.path.exists(resolved_path):
+            return resolved_path
+    return ''
+
+
+def get_delphyne_gui_circuit():
+    """Resolve the path for the circuit map against delphyne_gui resources root location."""
+    filename = "roads/circuit.yaml"
+    resolved_path = delphyne_gui.utilities.get_delphyne_gui_resource(filename)
+    if os.path.exists(resolved_path):
+        return resolved_path
+    return ''
+
+
+@dataclass
+class ScenarioSubtreeConfig:
+    """Configuration for the scenario subtree."""
+    name: str
+    circuit_filepath: str
+    lanes: list
+    origin: str = "{0., 0.}"
+
+
+def get_scenario_subtree_config(backend):
+    """Obtain the circuit filepath based on the selected backend."""
+    if MaliputBackend(backend) == MaliputBackend.MALIPUT_MULTILANE:
+        config = ScenarioSubtreeConfig(name="circuit_multilane",
+                                       circuit_filepath=get_delphyne_gui_circuit(),
+                                       lanes=["l:s1_0", "l:s1_1", "l:s1_2"])
+    elif(MaliputBackend(backend) == MaliputBackend.MALIPUT_OSM):
+        config = ScenarioSubtreeConfig(name="circuit_osm",
+                                       circuit_filepath=get_maliput_osm_circuit(),
+                                       lanes=["1825", "1405", "1352"],
+                                       origin="{0., 0.}")
+    else:
+        print("Backend {} not supported".format(backend))
+        quit()
+    return config
 
 
 def parse_arguments():
@@ -66,21 +120,20 @@ See also https://toyotagazooracing.com/
     parser.add_argument("-n", "--num-cars", default=3, type=int,
                         help="The number of MOBIL cars on scene (default: 3).")
 
+    parser.add_argument("-m", "--maliput-backend", default="maliput_multilane", type=str,
+                        help="""The maliput backend to use, maliput_osm or maliput_multilane
+                        (default: maliput_multilane).""")
+
     return parser.parse_args()
 
 
-def create_gazoo_scenario_subtree(filename, mobil_cars_num):
-    # The road geometry
-    scenario_subtree = delphyne.behaviours.roads.Multilane(
-        file_path=filename,
-        name="circuit",
-    )
-
+def add_agents_to_scenario(scenario_subtree, mobil_cars_num, lanes):
+    "Adds agents to the scenario subtree."
     # Setup railcar 1
     railcar_speed = 4.0  # (m/s)
     railcar_s = 0.0      # (m)
     robot_id = 1
-    lane_1 = "l:s1_0"
+    lane_1 = lanes[0]
     scenario_subtree.add_child(
         delphyne.behaviours.agents.RailCar(
             name=str(robot_id),
@@ -95,7 +148,7 @@ def create_gazoo_scenario_subtree(filename, mobil_cars_num):
     railcar_speed = 8.0  # (m/s)
     railcar_s = 0.0      # (m)
     robot_id += 1
-    lane_2 = "l:s1_1"
+    lane_2 = lanes[1]
     scenario_subtree.add_child(
         delphyne.behaviours.agents.RailCar(
             name=str(robot_id),
@@ -110,7 +163,7 @@ def create_gazoo_scenario_subtree(filename, mobil_cars_num):
     railcar_speed = 7.0  # (m/s)
     railcar_s = 0.0      # (m)
     robot_id += 1
-    lane_3 = "l:s1_2"
+    lane_3 = lanes[2]
     scenario_subtree.add_child(
         delphyne.behaviours.agents.RailCar(
             name=str(robot_id),
@@ -142,6 +195,37 @@ def create_gazoo_scenario_subtree(filename, mobil_cars_num):
     return scenario_subtree
 
 
+def create_gazoo_scenario_subtree(backend, mobil_cars_num):
+    "Creates the Gazoo scenario subtree."
+    print("Creating Gazoo scenario subtree...")
+    config = get_scenario_subtree_config(backend)
+    if not os.path.isfile(config.circuit_filepath):
+        print("Required map 'circuit' not found for the backend: {}"
+              .format(backend))
+        quit()
+    features = delphyne.roads.ObjFeatures()
+    features.draw_elevation_bounds = False
+    if(MaliputBackend(backend) == MaliputBackend.MALIPUT_MULTILANE):
+        scenario_subtree = delphyne.behaviours.roads.Multilane(
+            file_path=config.circuit_filepath,
+            name=config.name,
+            features=features,
+
+        )
+    elif(MaliputBackend(backend) == MaliputBackend.MALIPUT_OSM):
+        scenario_subtree = delphyne.behaviours.roads.MaliputOSM(
+            file_path=config.circuit_filepath,
+            name=config.name,
+            origin=config.origin,
+            features=features
+        )
+    else:
+        print("Backend {} not supported".format(backend))
+        quit()
+
+    return add_agents_to_scenario(scenario_subtree, mobil_cars_num, config.lanes)
+
+
 ##############################################################################
 # Main
 ##############################################################################
@@ -156,18 +240,10 @@ def main():
         quit()
 
     mobil_cars_num = args.num_cars
-
-    filename = delphyne_gui.utilities.get_delphyne_gui_resource(
-        'roads/circuit.yaml')
-
-    if not os.path.isfile(filename):
-        print("Required file {} not found."
-              " Please, make sure to install the latest delphyne_gui."
-              .format(os.path.abspath(filename)))
-        quit()
+    maliput_backend = args.maliput_backend
 
     simulation_tree = delphyne.trees.BehaviourTree(
-        root=create_gazoo_scenario_subtree(filename, mobil_cars_num)
+        root=create_gazoo_scenario_subtree(maliput_backend, mobil_cars_num)
     )
 
     sim_runner_time_step = 0.015

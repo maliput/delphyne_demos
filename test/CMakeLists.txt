@@ -145,6 +145,10 @@ if (NOT ${SANITIZERS})
     COMMAND delphyne_gazoo -b -d 2
   )
   add_test(
+    NAME smoke_test_delphyne_gazoo_osm
+    COMMAND delphyne_gazoo -m maliput_osm -b -d 2
+  )
+  add_test(
     NAME smoke_test_delphyne_city
     COMMAND delphyne_city -b -d 2
   )
