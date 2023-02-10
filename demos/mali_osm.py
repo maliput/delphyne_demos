@@ -135,6 +135,15 @@ KNOWN_ROADS = {
         'moving_forward': True,
         'linear_tolerance': 1e-3,
     },
+    'Town01': {
+        'description': 'A Town map.',
+        'file_path': 'town_01.osm',
+        'origin': '{0., 0.}',
+        'lane_id': '4087',
+        'lane_position': 0.,
+        'moving_forward': True,
+        'linear_tolerance': 1e-3,
+    },
 }
 
 
