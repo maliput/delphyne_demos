@@ -38,6 +38,10 @@ if (NOT ${SANITIZERS})
     NAME smoke_test_delphyne_mali_osm_circuit
     COMMAND delphyne_mali_osm -n Circuit -b -d 2
   )
+  add_test(
+    NAME smoke_test_delphyne_mali_osm_town_01
+    COMMAND delphyne_mali_osm -n Town01 -b -d 2
+  )
 
   ## delphyne_mali
   add_test(
