@@ -196,6 +196,7 @@ KNOWN_ROADS = {
         'lane_position': 0.,
         'moving_forward': True,
         'linear_tolerance': 7e-2,
+        'angular_tolerance': 2e-2,
     },
     'Town05': {
         'description': 'Grid city',
